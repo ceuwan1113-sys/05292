@@ -42,10 +42,11 @@ nav.bg{background:rgba(242,237,230,.95);backdrop-filter:blur(10px);border-bottom
 .col-text{padding:80px 64px;display:flex;flex-direction:column;justify-content:center;}
 .col-img{position:relative;overflow:hidden;min-height:460px;}
 
-/* 這裡加入了控制圖片比例的 CSS */
 .col-img img{width:100%;height:100%;object-fit:cover;position:relative;z-index:1;display:block;}
 
-.col-img-inner{position:absolute;inset:-20%;will-change:transform;background-size:cover;background-position:center;}
+/* ── 修復：z-index:0 讓圖片蓋過色塊 ── */
+.col-img-inner{position:absolute;inset:-20%;will-change:transform;background-size:cover;background-position:center;z-index:0;}
+
 .img-rust{background-color:#8b4a3c;}
 .img-warm{background-color:#b89070;}
 .img-slate{background-color:#4a5a6a;}
@@ -282,7 +283,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
   </div>
   <div class="col-img">
     <div class="col-img-inner img-rust" id="pi1"></div>
-        <img src="2.jpg" alt="貝貝與養母">
+    <img src="2.jpg" alt="貝貝與養母">
     <div class="img-label">圖：貝貝與養母 ／ 圖片提供</div>
   </div>
 </section>
@@ -290,7 +291,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <section id="s2" class="two-col">
   <div class="col-img" style="order:-1">
     <div class="col-img-inner img-warm" id="pi2"></div>
-        <img src="3.jpg" alt="教室場景">
+    <img src="3.jpg" alt="教室場景">
     <div class="img-label">圖：教室場景 ／ 圖片提供</div>
   </div>
   <div class="col-text reveal">
