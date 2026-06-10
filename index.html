@@ -176,29 +176,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 .reveal.d1{transition-delay:.13s;}.reveal.d2{transition-delay:.26s;}.reveal.d3{transition-delay:.39s;}
 .lift{transition:transform .3s,box-shadow .3s;}
 .lift:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.12);}
-/* ── HERO IMAGE PLACEHOLDER ── */
-.hero-img-placeholder{position:absolute;inset:0;z-index:1;background:#2a1f18;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.hero-img-placeholder img{width:100%;height:100%;object-fit:cover;opacity:.55;}
-.hero-img-placeholder .placeholder-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(242,237,230,.3);text-align:center;line-height:2;pointer-events:none;}
-/* ── MUSIC PLAYER ── */
-.music-bar{position:absolute;bottom:80px;left:80px;z-index:4;display:flex;align-items:center;gap:16px;background:rgba(14,11,8,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);padding:14px 22px;max-width:480px;}
-.music-play-btn{width:36px;height:36px;border-radius:50%;background:#8b4a3c;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
-.music-play-btn:hover{background:#a05a4c;}
-.music-play-btn svg{width:14px;height:14px;fill:#f2ede6;margin-left:2px;}
-.music-play-btn.playing svg.icon-play{display:none;}
-.music-play-btn.playing svg.icon-pause{display:block!important;}
-.music-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.music-title{font-family:'Noto Serif TC',serif;font-size:12px;color:rgba(242,237,230,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.music-caption{font-size:10px;color:rgba(242,237,230,.38);letter-spacing:.06em;line-height:1.5;}
-.music-progress{flex:1;display:flex;flex-direction:column;gap:5px;}
-.music-track{height:3px;background:rgba(255,255,255,.12);border-radius:999px;cursor:pointer;position:relative;}
-.music-fill{height:100%;background:#8b4a3c;border-radius:999px;width:0%;transition:width .3s linear;}
-.music-time{font-size:10px;color:rgba(242,237,230,.3);letter-spacing:.06em;}
-.music-yt{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;color:rgba(242,237,230,.35);text-decoration:none;transition:color .2s;flex-shrink:0;}
-.music-yt:hover{color:#c9956a;}
 @media(max-width:840px){
-  .music-bar{left:24px;right:24px;bottom:60px;max-width:none;}
-}
   .two-col,.s5-grid,.chart-wrap,.policy-grid,.s8-inner,.dilemma-row,.scrolly{grid-template-columns:1fr;}
   nav,#s3,#s4,#s5,#s6,#s7,#s8,#s9,.scrolly,.pq-big{padding:56px 24px;}
   .hero-inner{padding:0 24px;}
@@ -208,12 +186,18 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
   .vs-mid{display:none;}
   .scrolly-sticky{display:none;}
 }
+/* ── MUSIC BTN ── */
+.music-btn{position:fixed;bottom:28px;right:28px;z-index:8000;width:44px;height:44px;border-radius:50%;background:rgba(14,11,8,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;}
+.music-btn:hover{background:rgba(139,74,60,.85);transform:scale(1.08);}
+.music-btn svg{width:18px;height:18px;fill:rgba(242,237,230,.85);}
+.music-btn.muted .icon-on{display:none;}
+.music-btn:not(.muted) .icon-off{display:none;}
 </style>
 </head>
 <body>
-
+ 
 <div id="prog"></div>
-
+ 
 <nav id="nav">
   <div class="nav-title"></div>
   <ul class="nav-links">
@@ -223,14 +207,10 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <li><a href="#s7">制度</a></li>
   </ul>
 </nav>
-
+ 
 <section id="hero">
   <div class="hero-para" id="hp"></div>
   <div class="hero-grain"></div>
-  <!-- 待換圖片：將色塊替換為 <img src="1.jpg"> 後即可顯示封面照 -->
-  <div class="hero-img-placeholder" id="heroCover">
-    <div class="placeholder-label">封面圖片<br>請替換為 1.jpg</div>
-  </div>
   <div class="hero-inner">
     <span class="hero-kicker">深度報導 · 台灣收養困境</span>
     <h1 class="hero-h1">
@@ -244,31 +224,18 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
       <div class="hero-scroll-line"></div>
     </div>
   </div>
-  <!-- 音樂播放器 -->
-  <div class="music-bar">
-    <button class="music-play-btn" id="musicBtn" onclick="toggleMusic()">
-      <svg class="icon-play" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z"/></svg>
-      <svg class="icon-pause" style="display:none" viewBox="0 0 16 16"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
-    </button>
-    <div class="music-info">
-      <div class="music-title">貝貝為媽媽親手作詞作曲</div>
-      <div class="music-caption">旋律間傾瀉滿滿的感謝與關愛｜貝貝媽提供</div>
-    </div>
-    <div class="music-progress">
-      <div class="music-track" id="musicTrack" onclick="seekMusic(event)">
-        <div class="music-fill" id="musicFill"></div>
-      </div>
-      <div class="music-time" id="musicTime">0:00 / 0:00</div>
-    </div>
-    <a class="music-yt" href="https://www.youtube.com/watch?v=r-u5CmVnd1o" target="_blank" rel="noopener">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.75 12.34 12.34 0 0 0-7.64 0A4.83 4.83 0 0 1 4.41 6.69 12.06 12.06 0 0 0 4 12a12.06 12.06 0 0 0 .41 5.31 4.83 4.83 0 0 1 3.77 2.75 12.34 12.34 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.75A12.06 12.06 0 0 0 20 12a12.06 12.06 0 0 0-.41-5.31zM9.75 15.02V8.98L15.5 12z"/></svg>
-      YouTube
-    </a>
-  </div>
-  <audio id="bgMusic" src="Video_Project_17.m4a" preload="metadata"></audio>
   <div class="hero-byline">記者｜孟祥宇・丘羨陶・邱柏翔・黃千艾</div>
 </section>
-
+ 
+<!-- 音樂靜音按鈕（固定右下角） -->
+<button class="music-btn" id="musicBtn" onclick="toggleMute()" title="音樂開關">
+  <!-- 喇叭開 -->
+  <svg class="icon-on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+  <!-- 喇叭關 -->
+  <svg class="icon-off" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+</button>
+<audio id="bgMusic" src="Video_Project_17.m4a" autoplay loop></audio>
+ 
 <section id="s1" class="two-col">
   <div class="col-text reveal">
     <span class="tag">緣起</span>
@@ -287,7 +254,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <div class="img-label">圖：貝貝與養母 ／ 圖片提供</div>
   </div>
 </section>
-
+ 
 <section id="s2" class="two-col">
   <div class="col-img" style="order:-1">
     <div class="col-img-inner img-warm" id="pi2"></div>
@@ -303,7 +270,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <span class="click-hint" onclick="openM('m-trust')">了解依附關係的重建</span>
   </div>
 </section>
-
+ 
 <section id="s3" style="background:#f2ede6;padding-top:80px;">
   <div style="max-width:1080px;margin:0 auto;padding:0 80px 40px;">
     <span class="tag reveal">陪孩子走過一次次的「卡關」</span>
@@ -352,7 +319,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <div class="qband" id="qb1">
   <div class="qband-para" id="qbp1"></div>
   <blockquote class="reveal">
@@ -360,7 +327,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <cite>——林宜輝，國立政治大學社會工作研究所副教授</cite>
   </blockquote>
 </div>
-
+ 
 <section id="s4">
   <div class="s4-inner">
     <h2 class="s4-head reveal">愛與安置名額的殘酷拉扯</h2>
@@ -386,7 +353,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <section id="s5">
   <div class="s5-inner">
     <div class="reveal">
@@ -418,7 +385,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <section id="s6">
   <div class="s6-inner">
     <div class="reveal">
@@ -462,7 +429,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <div class="qband" id="qb2">
   <div class="qband-para" id="qbp2"></div>
   <blockquote class="reveal">
@@ -470,7 +437,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <cite>——蘇淑霞，小天使家園收出養組長</cite>
   </blockquote>
 </div>
-
+ 
 <section id="s7">
   <div class="s7-inner">
     <div class="reveal">
@@ -505,7 +472,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <section id="s8">
   <div class="s8-inner">
     <div class="reveal">
@@ -549,7 +516,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     </div>
   </div>
 </section>
-
+ 
 <section id="s9">
   <div class="s9-inner reveal">
     <p>在台灣的某個角落，有孩子在機構的床上等待著一個可以稱之為「家」的地方。</p>
@@ -557,34 +524,25 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <p>家還有多遠？這個答案，不只取決於收養家庭的勇氣，更取決於整個社會是否願意一起走這段路。</p>
   </div>
 </section>
-
+ 
 <footer>
   <div>© 2025 融媒體報導 第六組</div>
   <div>孟祥宇・丘羨陶・邱柏翔・黃千艾</div>
   <div>資料來源：衛福部社家署・勵馨基金會・小天使家園</div>
 </footer>
-
+ 
 <!-- ─── MODALS ─── -->
-
+ 
 <div class="mbg" id="m-beibei" onclick="closeMBg(event,'m-beibei')">
 <div class="mbox"><button class="mx" onclick="closeM('m-beibei')">✕</button>
-<span class="tag">貝貝的歌</span>
-<h3>她為媽媽寫了一首歌</h3>
-<p>在十八年的陪伴裡，貝貝從一個不會哭的嬰兒，長成了一個懂得用音符表達愛的人。她親手為養母作詞作曲，把多年來的感謝，都藏進了那段旋律。</p>
-<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:20px 0;background:#1e1810;">
-  <iframe
-    src="https://www.youtube.com/embed/r-u5CmVnd1o"
-    title="貝貝為媽媽親手作詞作曲"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-    style="position:absolute;top:0;left:0;width:100%;height:100%;">
-  </iframe>
-</div>
-<p class="data-note" style="margin-top:4px;">影片提供／貝貝媽</p>
-<p>貝貝媽說，她從不要求貝貝用某種方式表達情感，「進步的定義，是跟她自己比。」這首歌，是貝貝用她自己的節奏，走到了那裡。</p>
+<span class="tag">貝貝的故事</span>
+<h3>從毒寶寶到一家人的十八年</h3>
+<p>貝貝才四個月大時，因生父母藥癮而成為「毒寶寶」，被安置在機構。貝貝媽在擔任義工的過程中與她相遇，在生母過世、外公授權後，正式完成收養程序。</p>
+<p>貝貝在三歲時取得身心障礙手冊，診斷為自閉症。十八年來，貝貝媽陪女兒看心智科、面對各種情緒爆發，同時開設藥局維持彈性工時，為女兒提供最需要的陪伴。</p>
+<blockquote>「那（些挑戰）就是我們的生活啊，一個家庭本來就有各種各樣的樣貌。」——貝貝媽</blockquote>
+<p>貝貝目前已能獨自搭車去銀行實習，親手為生母作詞作曲——每一步都是與自己比較的進步。</p>
 </div></div>
-
+ 
 <div class="mbg" id="m-trust" onclick="closeMBg(event,'m-trust')">
 <div class="mbox"><button class="mx" onclick="closeM('m-trust')">✕</button>
 <span class="tag">依附關係</span>
@@ -594,7 +552,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <p>陳冠昇和家人陪伴這個孩子兩年多，從嚴重遲緩，一路追上同齡孩子的生長曲線，最終成功出養。他說，這些孩子只要有人好好陪，進步是很快的：「最有用的，就是讓他們去跟一般的孩子直接接觸，他們會觀察、會模仿。」</p>
 <p>入籍後的前三年，是建立依附關係的黃金期。這也是為什麼制度改革者呼籲將育嬰留停的基準改為「入籍後前三年」。</p>
 </div></div>
-
+ 
 <div class="mbg" id="m-therapy" onclick="closeMBg(event,'m-therapy')">
 <div class="mbox"><button class="mx" onclick="closeM('m-therapy')">✕</button>
 <span class="tag">早療介入</span>
@@ -604,7 +562,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <p>高婕也提醒，早療不應只依賴醫院每週三十分鐘的門診，更重要的是家長在居家環境中的持續投入，才能盡早達到獨立生活的目標。</p>
 <p>她分析職場彈性的必要性：「家長有時間，才能有餘裕去挑選最適合孩子的治療師，而不是因為趕著上班，只能就近在住家附近隨便找間診所將就。」</p>
 </div></div>
-
+ 
 <div class="mbg" id="m-crossborder" onclick="closeMBg(event,'m-crossborder')">
 <div class="mbox"><button class="mx" onclick="closeM('m-crossborder')">✕</button>
 <span class="tag">跨國出養</span>
@@ -613,7 +571,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <blockquote>「隨著年紀增長，他們會發現膚色與養父母不同，產生難以融入主流社會、卻也回不去原生文化的矛盾，永遠在尋根與感恩之間掙扎。」——林宜輝</blockquote>
 <p>這不是個別案例，而是系統性問題。根據聯合國《兒童權利公約》第21條，跨國收養應為最後手段，各國應優先促成國內收養，以確保兒童在熟悉的文化環境中成長。</p>
 </div></div>
-
+ 
 <!-- ─── 83% 彈窗：改用 PDF 真實數據 ─── -->
 <div class="mbg" id="m-83" onclick="closeMBg(event,'m-83')">
 <div class="mbox"><button class="mx" onclick="closeM('m-83')">✕</button>
@@ -636,7 +594,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <blockquote>「我們在國內都會先試幾輪媒合，但最後卡關的幾乎都是健康議題。」——賴沂錚，勵馨基金會督導</blockquote>
 <p>特別值得注意的是，在尚未完成媒合、仍在等待中的309名兒少裡，6歲至12歲的大齡兒童佔70人，發展遲緩或疾病個案比例同樣偏高——這群孩子是最難在國內找到家的群體。</p>
 </div></div>
-
+ 
 <div class="mbg" id="m-left" onclick="closeMBg(event,'m-left')">
 <div class="mbox"><button class="mx" onclick="closeM('m-left')">✕</button>
 <span class="tag">選項一</span>
@@ -645,7 +603,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <p>然而，這也意味著必須割捨與孩子建立的深厚情感，對寄養家庭而言是極大的心理代價——尤其是當孩子已在家庭中生活數年，建立了真實的依附關係。</p>
 <blockquote>這份兩難，是現行制度設計下的系統性困境，而非個別家庭的道德選擇。</blockquote>
 </div></div>
-
+ 
 <div class="mbg" id="m-right" onclick="closeMBg(event,'m-right')">
 <div class="mbox"><button class="mx" onclick="closeM('m-right')">✕</button>
 <span class="tag">選項二</span>
@@ -654,27 +612,27 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <p>這種「愛的代價」讓許多寄養家庭陷入深深的道德困境，也反映出台灣安置資源不足的根本問題。</p>
 <blockquote>「那（些挑戰）就是我們的生活啊，一個家庭本來就有各種各樣的樣貌。」——貝貝媽</blockquote>
 </div></div>
-
+ 
 <div class="mbg" id="m-tw1" onclick="closeMBg(event,'m-tw1')"><div class="mbox"><button class="mx" onclick="closeM('m-tw1')">✕</button><span class="tag">台灣現況</span><h3>補助未分級的困境</h3><p>目前台灣的補助並未區分一般兒童與收養兒童，兩者的資源與金額大致相同，難以反映在照顧成本與需求上的差異。</p><p>收養先天性心臟病童的蔡峰肇表示：「收養先天疾病的小孩並沒有特別的補助，在托育或是幼兒園費用上，都沒有什麼不一樣的地方。」</p><blockquote>對於涉及醫療復健、心理支持與教育輔導的特殊兒童而言，這樣的制度設計無疑加重了收養家庭的負擔。</blockquote></div></div>
-
+ 
 <div class="mbg" id="m-tw2" onclick="closeMBg(event,'m-tw2')"><div class="mbox"><button class="mx" onclick="closeM('m-tw2')">✕</button><span class="tag">台灣現況</span><h3>育嬰留停的年齡限制</h3><p>目前台灣的育嬰留職停薪僅適用於三歲以下的幼童，但許多大齡兒童在媒合成功時往往已超過三歲，這導致家長在孩子最需要建立依附關係的初期，卻無法請假陪伴。</p><blockquote>「收養大齡或特殊需求的孩子，要建立信任關係本來就比一般孩子困難。入籍後的前三年是他們感受安全感的黃金期。」——蘇淑霞</blockquote><p>目前衛福部社家署正討論將年限放寬至六歲，若能落實，將對大齡兒童媒合帶來正面影響。</p></div></div>
-
+ 
 <div class="mbg" id="m-tw3" onclick="closeMBg(event,'m-tw3')"><div class="mbox"><button class="mx" onclick="closeM('m-tw3')">✕</button><span class="tag">台灣現況</span><h3>語言早療的資源困境</h3><p>高婕指出：「在台灣，家長要帶孩子接受語言治療，要嘛完全自費，要嘛在健保門診中漫長排隊。」相比之下，美國的早療課程可申請保險給付，家長不必獨力承擔高昂費用。</p><p>這導致收養特殊兒童的家庭，在選擇早療資源時往往受限，無法為孩子找到最合適的治療師與課程。</p></div></div>
-
+ 
 <div class="mbg" id="m-tw4" onclick="closeMBg(event,'m-tw4')"><div class="mbox"><button class="mx" onclick="closeM('m-tw4')">✕</button><span class="tag">台灣現況</span><h3>收養家庭的定位模糊</h3><blockquote>「在台灣現行制度下，收養家庭的定位尚未明確——究竟應被視為一般家庭，還是執行永久安置功能、需要國家特別支持的家庭？這個問題若無法釐清，補助政策便難以對症下藥。」——陳玉楨</blockquote><p>這個根本性的定位問題，導致所有相關政策都缺乏明確的設計方向，收養家庭的支持系統因此難以建立。</p></div></div>
-
+ 
 <div class="mbg" id="m-tw5" onclick="closeMBg(event,'m-tw5')"><div class="mbox"><button class="mx" onclick="closeM('m-tw5')">✕</button><span class="tag">台灣現況</span><h3>資源媒合的被動困境</h3><p>蔡峰肇補充，在尋找相關支持的過程中，家長往往處於被動狀態，很多資源都必須自己去找，政府能給予的幫助其實很有限。</p><p>這與美國建立的主動媒合機制形成對比——在美國，相關的社區資源、補助申請，有專門的社工協助家庭取得，而非讓家長獨自摸索。</p></div></div>
-
+ 
 <div class="mbg" id="m-us1" onclick="closeMBg(event,'m-us1')"><div class="mbox"><button class="mx" onclick="closeM('m-us1')">✕</button><span class="tag">美國制度</span><h3>Medicaid：政府公立保險</h3><p>美國針對身心障礙與18歲以下兒童設有政府公立保險 Medicaid，來支援家庭照護費用。</p><p>高婕解釋：「在美國，只要有醫生證明孩子確實有發展遲緩或溝通障礙，這類語言治療的早療課程就可以申請保險給付，家長不必像在台灣得完全仰賴家庭自費，或在健保門診中漫長排隊。」</p></div></div>
-
+ 
 <div class="mbg" id="m-us2" onclick="closeMBg(event,'m-us2')"><div class="mbox"><button class="mx" onclick="closeM('m-us2')">✕</button><span class="tag">美國制度</span><h3>早療保險給付</h3><p>在美國，語言治療、職能治療等早療課程均可申請保險給付。這讓家長能有更多時間與精力陪伴孩子，而不是花費大量資源在尋找與支付治療費用上。</p><blockquote>「家長有時間，才能有餘裕去挑選最適合孩子的治療師，而不是因為趕著上班，只能就近在住家附近隨便找間診所將就。」——高婕</blockquote></div></div>
-
+ 
 <div class="mbg" id="m-us3" onclick="closeMBg(event,'m-us3')"><div class="mbox"><button class="mx" onclick="closeM('m-us3')">✕</button><span class="tag">美國制度</span><h3>Title IV-E 法案</h3><p>根據美國聯邦「Title IV-E」法案，政府會與符合資格的家庭簽署協議，提供等同該州寄養費率的每月津貼。</p><p>這項制度讓收養特殊需求兒童的家庭，能在經濟層面獲得持續性的政府支持，減輕長期照顧的財務壓力。</p></div></div>
-
+ 
 <div class="mbg" id="m-us4" onclick="closeMBg(event,'m-us4')"><div class="mbox"><button class="mx" onclick="closeM('m-us4')">✕</button><span class="tag">美國制度</span><h3>收養稅額抵免</h3><div class="stat-row"><div class="stat-item"><div class="num" style="font-size:36px;">$17,280</div><div class="lbl">2025年每名特殊需求兒童<br>最高稅額抵免金額</div></div></div><p>以2025年為例，完成特殊需求兒童收養的家庭可申請每名孩子最高17,280美元的稅額抵免，且不論實際花費多寡均可全額申請，顯著減輕了家庭的財務壓力。</p></div></div>
-
+ 
 <div class="mbg" id="m-us5" onclick="closeMBg(event,'m-us5')"><div class="mbox"><button class="mx" onclick="closeM('m-us5')">✕</button><span class="tag">美國制度</span><h3>社區共同分擔</h3><blockquote>「在國外收養特殊兒童，反而是一種優勢，因為整個社區與政府都會一起分擔照顧責任。」——蘇淑霞</blockquote><p>美國的收養支持體系不是由家庭孤立承擔，而是透過社區網絡、學校支援系統、政府津貼、保險給付等多重機制共同分擔，讓收養家庭不必在黑暗中摸索。</p></div></div>
-
+ 
 <script>
 const prog = document.getElementById('prog');
 window.addEventListener('scroll', () => {
@@ -753,43 +711,7 @@ function closeM(id) {
 function closeMBg(e, id) {
   if (e.target === document.getElementById(id)) closeM(id);
 }
-// ── MUSIC PLAYER ──
-const audio = document.getElementById('bgMusic');
-const musicBtn = document.getElementById('musicBtn');
-const musicFill = document.getElementById('musicFill');
-const musicTime = document.getElementById('musicTime');
-const musicTrack = document.getElementById('musicTrack');
-
-function fmtTime(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ':' + (sec < 10 ? '0' : '') + sec;
-}
-function toggleMusic() {
-  if (audio.paused) {
-    audio.play();
-    musicBtn.classList.add('playing');
-  } else {
-    audio.pause();
-    musicBtn.classList.remove('playing');
-  }
-}
-function seekMusic(e) {
-  const rect = musicTrack.getBoundingClientRect();
-  const ratio = (e.clientX - rect.left) / rect.width;
-  audio.currentTime = ratio * audio.duration;
-}
-audio.addEventListener('timeupdate', () => {
-  if (!audio.duration) return;
-  const pct = (audio.currentTime / audio.duration) * 100;
-  musicFill.style.width = pct + '%';
-  musicTime.textContent = fmtTime(audio.currentTime) + ' / ' + fmtTime(audio.duration);
-});
-audio.addEventListener('ended', () => {
-  musicBtn.classList.remove('playing');
-  musicFill.style.width = '0%';
-});
-// ── END MUSIC PLAYER ──
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     document.querySelectorAll('.mbg.open').forEach(m => {
       m.classList.remove('open');
@@ -797,6 +719,20 @@ audio.addEventListener('ended', () => {
     });
   }
 });
+// ── MUSIC ──
+const bgMusic = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+bgMusic.volume = 0.45;
+function toggleMute() {
+  bgMusic.muted = !bgMusic.muted;
+  musicBtn.classList.toggle('muted', bgMusic.muted);
+}
+// autoplay 需使用者互動，初次點擊頁面時嘗試播放
+document.addEventListener('click', function startAudio() {
+  bgMusic.play().catch(() => {});
+  document.removeEventListener('click', startAudio);
+}, { once: true });
 </script>
 </body>
 </html>
+ 
