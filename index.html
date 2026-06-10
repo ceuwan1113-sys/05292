@@ -186,7 +186,25 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
   .vs-mid{display:none;}
   .scrolly-sticky{display:none;}
 }
-/* ── MUSIC BTN ── */
+/* ── ACCORDION (s7) ── */
+.plist li{cursor:pointer;flex-direction:column;gap:0;}
+.plist li .pi-row{display:flex;align-items:flex-start;gap:13px;width:100%;}
+.plist li .acc-body{max-height:0;overflow:hidden;transition:max-height .38s ease,opacity .38s ease;opacity:0;font-size:13px;line-height:1.8;padding-left:26px;color:rgba(242,237,230,.55);}
+.plist li.open .acc-body{max-height:200px;opacity:1;}
+.plist li .acc-arrow{margin-left:auto;font-size:11px;transition:transform .3s;flex-shrink:0;color:rgba(242,237,230,.3);}
+.plist li.open .acc-arrow{transform:rotate(180deg);}
+
+/* ── CHARACTER SCENE (s1) ── */
+.char-scene{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.char-figure{position:absolute;bottom:0;pointer-events:all;cursor:pointer;transform:translateY(60px);opacity:0;transition:transform .6s cubic-bezier(.22,.61,.36,1),opacity .6s ease;transition-delay:var(--d,0s);}
+.char-scene.visible .char-figure{transform:translateY(0);opacity:1;}
+.char-figure img{height:200px;width:auto;display:block;filter:drop-shadow(0 8px 24px rgba(0,0,0,.35));transition:transform .25s;}
+.char-figure:hover img{transform:scale(1.06) translateY(-6px);}
+.char-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:rgba(14,11,8,.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-left:2px solid #8b4a3c;padding:12px 16px;width:180px;opacity:0;pointer-events:none;transition:opacity .2s;font-size:12px;line-height:1.7;color:rgba(242,237,230,.85);}
+.char-tooltip strong{display:block;font-family:'Noto Serif TC',serif;font-size:13px;color:#c9956a;margin-bottom:4px;}
+.char-figure:hover .char-tooltip{opacity:1;}
+</style>
+</head>
 .music-btn{position:fixed;bottom:28px;right:28px;z-index:8000;width:44px;height:44px;border-radius:50%;background:rgba(14,11,8,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;}
 .music-btn:hover{background:rgba(139,74,60,.85);transform:scale(1.08);}
 .music-btn svg{width:18px;height:18px;fill:rgba(242,237,230,.85);}
@@ -248,10 +266,25 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <p class="bc">貝貝在一歲十個月大時，正式成為了他們的女兒。然而，這樣的故事對更多等待出養的特殊需求孩子，依然是遙不可及的夢。</p>
     <span class="click-hint" onclick="openM('m-beibei')">深入了解貝貝的故事</span>
   </div>
-  <div class="col-img">
+  <div class="col-img" id="s1ImgWrap">
     <div class="col-img-inner img-rust" id="pi1"></div>
     <img src="2.jpg" alt="貝貝與養母">
     <div class="img-label">圖：貝貝與養母 ／ 圖片提供</div>
+    <!-- 手繪人物場景，滑動進入視野時浮現 -->
+    <div class="char-scene" id="charScene">
+      <div class="char-figure" style="--d:0.05s;left:8%;">
+        <img src="5.jpg" alt="貝貝媽">
+        <div class="char-tooltip"><strong>貝貝媽（化名）</strong>收養人。與先生從義工到父母，陪伴貝貝走過十八年。</div>
+      </div>
+      <div class="char-figure" style="--d:0.22s;left:38%;">
+        <img src="6.jpg" alt="貝貝">
+        <div class="char-tooltip"><strong>貝貝（化名）</strong>三歲診斷自閉症。目前在銀行實習，並親手為媽媽作詞作曲。</div>
+      </div>
+      <div class="char-figure" style="--d:0.4s;right:6%;">
+        <img src="7.jpg" alt="社工">
+        <div class="char-tooltip"><strong>社工</strong>連結收養家庭與機構，是每一段收養故事背後不可缺少的橋樑。</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -447,22 +480,52 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
     <div class="policy-grid">
       <div class="pcol tw reveal d1">
         <div class="pcol-head">🇹🇼 台灣現況</div>
-        <ul class="plist">
-          <li onclick="openM('m-tw1')"><span class="pi" style="color:#c05a3c">✗</span>補助未區分一般兒童與收養兒童，資源金額大致相同</li>
-          <li onclick="openM('m-tw2')"><span class="pi" style="color:#c05a3c">✗</span>育嬰留停僅適用三歲以下幼童</li>
-          <li onclick="openM('m-tw3')"><span class="pi" style="color:#c05a3c">✗</span>語言早療需自費或在健保門診中長時間排隊</li>
-          <li onclick="openM('m-tw4')"><span class="pi" style="color:#c05a3c">✗</span>收養家庭定位未明確，難以制定對症政策</li>
-          <li onclick="openM('m-tw5')"><span class="pi" style="color:#c05a3c">✗</span>資源取得多靠家長主動蒐集，缺乏主動媒合機制</li>
+        <ul class="plist" id="twList">
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#c05a3c">✗</span>補助未區分一般兒童與收養兒童，資源金額大致相同<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">目前台灣的補助未區分一般兒童與收養兒童，兩者資源與金額大致相同，難以反映照顧成本上的差異。收養先天疾病孩童的蔡峰肇表示：「收養先天疾病的小孩並沒有特別的補助，在托育或幼兒園費用上都沒有什麼不一樣。」</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#c05a3c">✗</span>育嬰留停僅適用三歲以下幼童<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">育嬰留職停薪僅適用三歲以下幼童，但大齡兒童媒合成功時往往已超過三歲，導致家長在孩子最需要建立依附關係的初期無法請假陪伴。衛福部社家署正討論將年限放寬至六歲。</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#c05a3c">✗</span>語言早療需自費或在健保門診中長時間排隊<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">高婕指出：「在台灣，家長要帶孩子接受語言治療，要嘛完全自費，要嘛在健保門診中漫長排隊。」相比之下，美國的早療課程可申請保險給付，家長不必獨力承擔高昂費用。</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#c05a3c">✗</span>收養家庭定位未明確，難以制定對症政策<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">陳玉楨：「收養家庭的定位尚未明確——究竟應被視為一般家庭，還是執行永久安置功能、需要國家特別支持的家庭？這個問題若無法釐清，補助政策便難以對症下藥。」</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#c05a3c">✗</span>資源取得多靠家長主動蒐集，缺乏主動媒合機制<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">蔡峰肇補充，在尋找相關支持的過程中，家長往往處於被動狀態，很多資源都必須自己去找，政府能給予的幫助其實很有限。</div>
+          </li>
         </ul>
       </div>
       <div class="pcol us reveal d2">
         <div class="pcol-head">🇺🇸 美國制度（對比參考）</div>
-        <ul class="plist">
-          <li onclick="openM('m-us1')"><span class="pi" style="color:#7db5c8">✓</span>Medicaid 公立保險涵蓋18歲以下身心障礙兒童醫療</li>
-          <li onclick="openM('m-us2')"><span class="pi" style="color:#7db5c8">✓</span>語言治療等早療課程可申請保險給付</li>
-          <li onclick="openM('m-us3')"><span class="pi" style="color:#7db5c8">✓</span>Title IV-E 法案：每月提供等同寄養費率之津貼</li>
-          <li onclick="openM('m-us4')"><span class="pi" style="color:#7db5c8">✓</span>2025年特殊需求收養稅額抵免最高每名 $17,280</li>
-          <li onclick="openM('m-us5')"><span class="pi" style="color:#7db5c8">✓</span>社區與政府共同分擔，家庭非孤立承擔照顧責任</li>
+        <ul class="plist" id="usList">
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#7db5c8">✓</span>Medicaid 公立保險涵蓋18歲以下身心障礙兒童醫療<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">美國針對身心障礙與18歲以下兒童設有政府公立保險 Medicaid 支援照護費用。高婕解釋：「只要有醫生證明孩子確實有發展遲緩或溝通障礙，語言治療等早療課程就可以申請保險給付。」</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#7db5c8">✓</span>語言治療等早療課程可申請保險給付<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">語言治療、職能治療等早療課程均可申請保險給付，讓家長有餘裕挑選最適合孩子的治療師，而不是就近隨便找一間診所將就。</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#7db5c8">✓</span>Title IV-E 法案：每月提供等同寄養費率之津貼<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">根據美國聯邦「Title IV-E」法案，政府與符合資格的家庭簽署協議，提供等同該州寄養費率的每月津貼，讓收養特殊需求兒童的家庭獲得持續性經濟支持。</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#7db5c8">✓</span>2025年特殊需求收養稅額抵免最高每名 $17,280<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">完成特殊需求兒童收養的家庭，可申請每名孩子最高 17,280 美元的稅額抵免，且不論實際花費多寡均可全額申請，顯著減輕財務壓力。</div>
+          </li>
+          <li onclick="toggleAcc(this)">
+            <div class="pi-row"><span class="pi" style="color:#7db5c8">✓</span>社區與政府共同分擔，家庭非孤立承擔照顧責任<span class="acc-arrow">▾</span></div>
+            <div class="acc-body">蘇淑霞：「在國外收養特殊兒童，反而是一種優勢，因為整個社區與政府都會一起分擔照顧責任。」透過社區網絡、學校支援系統、政府津貼等多重機制共同分擔，讓家庭不必獨力摸索。</div>
+          </li>
         </ul>
       </div>
     </div>
@@ -719,7 +782,25 @@ document.addEventListener('keydown', e => {
     });
   }
 });
-// ── MUSIC ──
+// ── ACCORDION ──
+function toggleAcc(li) {
+  const isOpen = li.classList.contains('open');
+  // 先關閉同列其他項目
+  li.closest('ul').querySelectorAll('li.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) li.classList.add('open');
+}
+
+// ── CHARACTER SCENE ──
+const charScene = document.getElementById('charScene');
+if (charScene) {
+  const sceneObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { charScene.classList.add('visible'); sceneObs.disconnect(); }
+    });
+  }, { threshold: 0.25 });
+  sceneObs.observe(charScene);
+}
+</script>
 const bgMusic = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicBtn');
 bgMusic.volume = 0.45;
