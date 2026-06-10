@@ -176,7 +176,29 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 .reveal.d1{transition-delay:.13s;}.reveal.d2{transition-delay:.26s;}.reveal.d3{transition-delay:.39s;}
 .lift{transition:transform .3s,box-shadow .3s;}
 .lift:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.12);}
+/* ── HERO IMAGE PLACEHOLDER ── */
+.hero-img-placeholder{position:absolute;inset:0;z-index:1;background:#2a1f18;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hero-img-placeholder img{width:100%;height:100%;object-fit:cover;opacity:.55;}
+.hero-img-placeholder .placeholder-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(242,237,230,.3);text-align:center;line-height:2;pointer-events:none;}
+/* ── MUSIC PLAYER ── */
+.music-bar{position:absolute;bottom:80px;left:80px;z-index:4;display:flex;align-items:center;gap:16px;background:rgba(14,11,8,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);padding:14px 22px;max-width:480px;}
+.music-play-btn{width:36px;height:36px;border-radius:50%;background:#8b4a3c;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
+.music-play-btn:hover{background:#a05a4c;}
+.music-play-btn svg{width:14px;height:14px;fill:#f2ede6;margin-left:2px;}
+.music-play-btn.playing svg.icon-play{display:none;}
+.music-play-btn.playing svg.icon-pause{display:block!important;}
+.music-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.music-title{font-family:'Noto Serif TC',serif;font-size:12px;color:rgba(242,237,230,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.music-caption{font-size:10px;color:rgba(242,237,230,.38);letter-spacing:.06em;line-height:1.5;}
+.music-progress{flex:1;display:flex;flex-direction:column;gap:5px;}
+.music-track{height:3px;background:rgba(255,255,255,.12);border-radius:999px;cursor:pointer;position:relative;}
+.music-fill{height:100%;background:#8b4a3c;border-radius:999px;width:0%;transition:width .3s linear;}
+.music-time{font-size:10px;color:rgba(242,237,230,.3);letter-spacing:.06em;}
+.music-yt{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;color:rgba(242,237,230,.35);text-decoration:none;transition:color .2s;flex-shrink:0;}
+.music-yt:hover{color:#c9956a;}
 @media(max-width:840px){
+  .music-bar{left:24px;right:24px;bottom:60px;max-width:none;}
+}
   .two-col,.s5-grid,.chart-wrap,.policy-grid,.s8-inner,.dilemma-row,.scrolly{grid-template-columns:1fr;}
   nav,#s3,#s4,#s5,#s6,#s7,#s8,#s9,.scrolly,.pq-big{padding:56px 24px;}
   .hero-inner{padding:0 24px;}
@@ -193,7 +215,7 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <div id="prog"></div>
 
 <nav id="nav">
-  <div class="nav-title">第六組 · 融媒體報導</div>
+  <div class="nav-title"></div>
   <ul class="nav-links">
     <li><a href="#s1">緣起</a></li>
     <li><a href="#s3">困境</a></li>
@@ -205,6 +227,10 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 <section id="hero">
   <div class="hero-para" id="hp"></div>
   <div class="hero-grain"></div>
+  <!-- 待換圖片：將色塊替換為 <img src="1.jpg"> 後即可顯示封面照 -->
+  <div class="hero-img-placeholder" id="heroCover">
+    <div class="placeholder-label">封面圖片<br>請替換為 1.jpg</div>
+  </div>
   <div class="hero-inner">
     <span class="hero-kicker">深度報導 · 台灣收養困境</span>
     <h1 class="hero-h1">
@@ -218,6 +244,28 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
       <div class="hero-scroll-line"></div>
     </div>
   </div>
+  <!-- 音樂播放器 -->
+  <div class="music-bar">
+    <button class="music-play-btn" id="musicBtn" onclick="toggleMusic()">
+      <svg class="icon-play" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z"/></svg>
+      <svg class="icon-pause" style="display:none" viewBox="0 0 16 16"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
+    </button>
+    <div class="music-info">
+      <div class="music-title">貝貝為媽媽親手作詞作曲</div>
+      <div class="music-caption">旋律間傾瀉滿滿的感謝與關愛｜貝貝媽提供</div>
+    </div>
+    <div class="music-progress">
+      <div class="music-track" id="musicTrack" onclick="seekMusic(event)">
+        <div class="music-fill" id="musicFill"></div>
+      </div>
+      <div class="music-time" id="musicTime">0:00 / 0:00</div>
+    </div>
+    <a class="music-yt" href="https://www.youtube.com/watch?v=r-u5CmVnd1o" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-2.75 12.34 12.34 0 0 0-7.64 0A4.83 4.83 0 0 1 4.41 6.69 12.06 12.06 0 0 0 4 12a12.06 12.06 0 0 0 .41 5.31 4.83 4.83 0 0 1 3.77 2.75 12.34 12.34 0 0 0 7.64 0 4.83 4.83 0 0 1 3.77-2.75A12.06 12.06 0 0 0 20 12a12.06 12.06 0 0 0-.41-5.31zM9.75 15.02V8.98L15.5 12z"/></svg>
+      YouTube
+    </a>
+  </div>
+  <audio id="bgMusic" src="Video_Project_17.m4a" preload="metadata"></audio>
   <div class="hero-byline">記者｜孟祥宇・丘羨陶・邱柏翔・黃千艾</div>
 </section>
 
@@ -520,14 +568,21 @@ footer{background:#0e0b08;padding:36px 80px;display:flex;justify-content:space-b
 
 <div class="mbg" id="m-beibei" onclick="closeMBg(event,'m-beibei')">
 <div class="mbox"><button class="mx" onclick="closeM('m-beibei')">✕</button>
-<span class="tag">貝貝的故事</span>
-<h3>從毒寶寶到一家人的十八年</h3>
-<p>與先生因為先生念藥學與公衛背景，加入台北市一間愛滋基金會擔任義工。基金會在某一階段因保母人力不足、經費有限，開始媒合義工家庭在週末接嬰兒回家照顧，讓保母可以休息。這個制度的形式固定：義工禮拜五午後去基金會接孩子，禮拜一早上送回去。</p>
-<p>受訪者與先生在這個制度下，開始在週末帶妹妹回家。妹妹是基金會照顧的嬰兒之一，出生時母親有毒癮，屬於所謂的「毒寶寶」。基金會規定，這類嬰兒在四個月大之前，死亡率比一般嬰兒高出數倍，不對外開放；滿四個月後，才逐步讓孩子隨週末寄養家庭出門，接觸社會化環境。</p>
-<blockquote>「只是想說就把我們家開放，把這個baby帶回來過週末」。——貝貝媽</blockquote>
-<p>受訪者說，當時完全沒有打算收養，「只是想說就把我們家開放，把這個baby帶回來過週末」。週末帶著妹妹的方式，就是跟著她自己的日常走——去教會帶著她，去買菜帶著她，盡量用背巾背著她，增加肌膚接觸。她的理由來自她對嬰兒發展的認識：長期的肌膚接觸，有助於建立親子之間的依附連結。
-受訪者也提到，那個時期遇到的其他義工家庭，大部分是外國人。在舊法框架下，當時確實有幾個家庭，從週末寄養義工，走到最後直接收養了他們照顧的孩子。
-</p>
+<span class="tag">貝貝的歌</span>
+<h3>她為媽媽寫了一首歌</h3>
+<p>在十八年的陪伴裡，貝貝從一個不會哭的嬰兒，長成了一個懂得用音符表達愛的人。她親手為養母作詞作曲，把多年來的感謝，都藏進了那段旋律。</p>
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:20px 0;background:#1e1810;">
+  <iframe
+    src="https://www.youtube.com/embed/r-u5CmVnd1o"
+    title="貝貝為媽媽親手作詞作曲"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;">
+  </iframe>
+</div>
+<p class="data-note" style="margin-top:4px;">影片提供／貝貝媽</p>
+<p>貝貝媽說，她從不要求貝貝用某種方式表達情感，「進步的定義，是跟她自己比。」這首歌，是貝貝用她自己的節奏，走到了那裡。</p>
 </div></div>
 
 <div class="mbg" id="m-trust" onclick="closeMBg(event,'m-trust')">
@@ -698,7 +753,43 @@ function closeM(id) {
 function closeMBg(e, id) {
   if (e.target === document.getElementById(id)) closeM(id);
 }
-document.addEventListener('keydown', e => {
+// ── MUSIC PLAYER ──
+const audio = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+const musicFill = document.getElementById('musicFill');
+const musicTime = document.getElementById('musicTime');
+const musicTrack = document.getElementById('musicTrack');
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+function toggleMusic() {
+  if (audio.paused) {
+    audio.play();
+    musicBtn.classList.add('playing');
+  } else {
+    audio.pause();
+    musicBtn.classList.remove('playing');
+  }
+}
+function seekMusic(e) {
+  const rect = musicTrack.getBoundingClientRect();
+  const ratio = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = ratio * audio.duration;
+}
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration) * 100;
+  musicFill.style.width = pct + '%';
+  musicTime.textContent = fmtTime(audio.currentTime) + ' / ' + fmtTime(audio.duration);
+});
+audio.addEventListener('ended', () => {
+  musicBtn.classList.remove('playing');
+  musicFill.style.width = '0%';
+});
+// ── END MUSIC PLAYER ──
   if (e.key === 'Escape') {
     document.querySelectorAll('.mbg.open').forEach(m => {
       m.classList.remove('open');
